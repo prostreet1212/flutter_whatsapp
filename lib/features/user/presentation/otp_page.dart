@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
+import 'package:flutter_whatsapp/features/user/presentation/inital_profile_submit_page.dart';
 
 import '../../app/theme/style.dart';
 
-class OtpPage extends StatelessWidget {
+class OtpPage extends StatefulWidget {
   const OtpPage({Key? key}) : super(key: key);
+
+  @override
+  State<OtpPage> createState() => _OtpPageState();
+}
+
+class _OtpPageState extends State<OtpPage> {
+
+  final TextEditingController _otpController = TextEditingController();
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +63,10 @@ class OtpPage extends StatelessWidget {
             ),
 
             GestureDetector(
-              onTap: _submitSmsCode,
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>InitalProfileSubmitPage()));
+
+              },
               child: Container(
                 margin: const EdgeInsets.only(bottom: 20),
                 width: 120,
@@ -74,18 +92,15 @@ class OtpPage extends StatelessWidget {
     );
   }
 
-
   Widget _pinCodeWidget() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: Column(
         children: <Widget>[
           PinCodeFields(
-            //controller: _otpController,
-
+            controller: _otpController,
             length: 6,
             activeBorderColor: tabColor,
-
             onComplete: (String pinCode) {},
           ),
           const Text("Enter your 6 digit code")

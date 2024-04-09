@@ -142,7 +142,6 @@ class _LoginPageState extends State<LoginPage> {
                     hintText: "Search",
                   ),
                   isSearchable: true,
-                  itemFilter: (c) => ['AR', 'DE', 'GB', 'RU'].contains(c.isoCode),
                   priorityList: [
                     CountryPickerUtils.getCountryByIsoCode('RU'),
                   ],
