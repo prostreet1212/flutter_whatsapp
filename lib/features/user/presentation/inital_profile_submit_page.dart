@@ -80,7 +80,9 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
             ),
             const SizedBox(height: 20,),
             GestureDetector(
-              onTap: submitProfileInfo,
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+              },
               child: Container(
                 width: 150,
                 height: 40,
@@ -100,7 +102,6 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
   }
 
   void submitProfileInfo() {
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
   /*  if(_image != null) {
       StorageProviderRemoteDataSource.uploadProfileImage(
           file: _image!,
