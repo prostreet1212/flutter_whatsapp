@@ -13,11 +13,17 @@ class OtpPage extends StatefulWidget {
 
 class _OtpPageState extends State<OtpPage> {
 
-  final TextEditingController _otpController = TextEditingController();
+   late final TextEditingController _otpController;
+
+   @override
+  void initState() {
+    super.initState();
+    _otpController = TextEditingController();
+  }
 
   @override
   void dispose() {
-    _otpController.dispose();
+    //_otpController.dispose();
     super.dispose();
   }
 
@@ -64,7 +70,7 @@ class _OtpPageState extends State<OtpPage> {
 
             GestureDetector(
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>InitalProfileSubmitPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const InitalProfileSubmitPage()));
 
               },
               child: Container(

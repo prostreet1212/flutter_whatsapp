@@ -4,6 +4,8 @@ import 'package:flutter_whatsapp/features/app/theme/style.dart';
 import 'package:flutter_whatsapp/features/app/welcome/welcome_page.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }

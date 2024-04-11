@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   String _countryCode = _selectedFilteredDialogCountry.phoneCode;
 
 
-  String _phoneNumber = "";
+  final String _phoneNumber = "";
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             GestureDetector(
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>OtpPage()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>const OtpPage()));
               },
               child: Container(
                 margin: const EdgeInsets.only(bottom: 20),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_whatsapp/features/app/theme/style.dart';
+import 'package:flutter_whatsapp/routes/on_generate_routes.dart';
 
 import 'features/app/splash/splash_screen.dart';
 
@@ -14,13 +15,19 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
   debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
+        useMaterial3: false,
         scaffoldBackgroundColor: backgroundColor,
         dialogBackgroundColor: appBarColor,
-        appBarTheme: AppBarTheme(
+        appBarTheme: const AppBarTheme(
           color: appBarColor,
         )
       ),
-      home:SplashScreen(),
+      //home:const SplashScreen(),
+      initialRoute: '/',
+      onGenerateRoute: OnGenerateRoute.route,
+      routes: {
+    '/':(context)=>SplashScreen()
+      },
     );
   }
 }

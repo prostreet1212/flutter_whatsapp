@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 
 String formatDateTime(DateTime dateTime) {
   final today = DateTime.now();
-  final tomorrow = DateTime.now().add(Duration(days: 1));
-  final yesterday = DateTime.now().subtract(Duration(days: 1));
+  final tomorrow = DateTime.now().add(const Duration(days: 1));
+  final yesterday = DateTime.now().subtract(const Duration(days: 1));
 
   final timeFormatter = DateFormat('h:mm a');
 

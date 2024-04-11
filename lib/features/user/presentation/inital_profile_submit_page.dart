@@ -17,10 +17,22 @@ class InitalProfileSubmitPage extends StatefulWidget {
 
 class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
 
-  final TextEditingController _usernameController = TextEditingController();
+  late final TextEditingController _usernameController;
   File? _image;
 
-  bool _isProfileUpdating = false;
+  @override
+  void initState() {
+    _usernameController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    super.dispose();
+  }
+
+  final bool _isProfileUpdating = false;
 
   Future selectImage() async {
     try {
@@ -44,7 +56,7 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        margin: EdgeInsets.symmetric(horizontal: 10,vertical: 30),
+        margin: const EdgeInsets.symmetric(horizontal: 10,vertical: 30),
         child: Column(
           children: [
             const SizedBox(height: 30,),
@@ -81,7 +93,7 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
             const SizedBox(height: 20,),
             GestureDetector(
               onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const HomePage()),(route)=>false);
               },
               child: Container(
                 width: 150,

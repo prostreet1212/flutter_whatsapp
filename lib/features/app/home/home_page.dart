@@ -3,7 +3,9 @@ import 'package:flutter_whatsapp/features/call/presentation/pages/call_history_p
 import 'package:flutter_whatsapp/features/chat/presentation/pages/chat_page.dart';
 import 'package:flutter_whatsapp/features/status/presentation/pages/status_page.dart';
 
+import '../const/page_const.dart';
 import '../theme/style.dart';
+import 'contacts_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -71,7 +73,10 @@ class _HomePageState extends State<HomePage>
                   PopupMenuItem<String>(
                     value: "Settings",
                     child: GestureDetector(
-                        onTap: () {}, child: const Text('Settings')),
+                        onTap: () {
+                          Navigator.pushNamed(context, PageConst.settingsPage);
+                        },
+                        child: const Text('Settings')),
                   ),
                 ],
               ),
@@ -109,7 +114,7 @@ class _HomePageState extends State<HomePage>
           switchFloatingActionButtonOnTabIndex(_currentTabIndex),
       body: TabBarView(
         controller: _tabController,
-        children: [
+        children: const [
           ChatPage(),
           StatusPage(),
           CallHistoryPage(),
@@ -125,8 +130,7 @@ class _HomePageState extends State<HomePage>
           return FloatingActionButton(
             backgroundColor: tabColor,
             onPressed: () {
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactsPage()));
-              //Navigator.pushNamed(context, PageConst.contactUsersPage, arguments: widget.uid);
+              Navigator.pushNamed(context, PageConst.contactUsersPage);
             },
             child: const Icon(
               Icons.message,
@@ -172,7 +176,7 @@ class _HomePageState extends State<HomePage>
           return FloatingActionButton(
             backgroundColor: tabColor,
             onPressed: () {
-              //Navigator.pushNamed(context, PageConst.callContactsPage);
+              Navigator.pushNamed(context, PageConst.callContactsPage);
             },
             child: const Icon(
               Icons.add_call,

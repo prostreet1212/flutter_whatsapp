@@ -23,8 +23,8 @@ class ChatPage extends StatelessWidget {
               child: profileWidget(),
             ),
           ),
-          title: Text("username"),
-          subtitle: Text("last message hi", maxLines: 1, overflow: TextOverflow.ellipsis,),
+          title: const Text("username"),
+          subtitle: const Text("last message hi", maxLines: 1, overflow: TextOverflow.ellipsis,),
           trailing: Text(
             DateFormat.jm().format(DateTime.now()),
             style: const TextStyle(color: greyColor, fontSize: 13),

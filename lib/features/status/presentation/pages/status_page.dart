@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_whatsapp/features/app/const/page_const.dart';
+import 'package:flutter_whatsapp/features/app/global/date/date_formats.dart';
 import 'package:flutter_whatsapp/features/app/global/widgets/profile_widget.dart';
 
 import '../../../app/theme/style.dart';
@@ -19,8 +22,8 @@ class StatusPage extends StatelessWidget {
                   Stack(
                     children: [
                       Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
                         width: 60,
                         height: 60,
                         child: ClipRRect(
@@ -77,6 +80,18 @@ class StatusPage extends StatelessWidget {
                       )
                     ],
                   )),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, PageConst.myStatusPage);
+                    },
+                    child: Icon(
+                      Icons.more_horiz,
+                      color: greyColor.withOpacity(.5),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
                 ],
               ),
               const SizedBox(
@@ -110,6 +125,11 @@ class StatusPage extends StatelessWidget {
                           child: profileWidget(),
                         ),
                       ),
+                      title: Text(
+                        "${'username'}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                      subtitle: Text(formatDateTime(DateTime.now())),
                     );
                   })
             ],
