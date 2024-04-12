@@ -3,7 +3,7 @@ import 'package:country_pickers/country_picker_dialog.dart';
 import 'package:country_pickers/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-import '../../app/theme/style.dart';
+import '../../../app/theme/style.dart';
 import 'otp_page.dart';
 
 class LoginPage extends StatefulWidget {

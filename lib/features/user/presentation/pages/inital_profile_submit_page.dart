@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_whatsapp/features/app/home/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../app/const/app_const.dart';
-import '../../app/global/widgets/profile_widget.dart';
-import '../../app/theme/style.dart';
+import '../../../app/const/app_const.dart';
+import '../../../app/global/widgets/profile_widget.dart';
+import '../../../app/theme/style.dart';
 
 class InitalProfileSubmitPage extends StatefulWidget {
   const InitalProfileSubmitPage({Key? key}) : super(key: key);

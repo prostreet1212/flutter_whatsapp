@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pin_code_fields/flutter_pin_code_fields.dart';
-import 'package:flutter_whatsapp/features/user/presentation/inital_profile_submit_page.dart';
+import 'package:flutter_whatsapp/features/user/presentation/pages/inital_profile_submit_page.dart';
 
-import '../../app/theme/style.dart';
+import '../../../app/theme/style.dart';
 
 class OtpPage extends StatefulWidget {
   const OtpPage({Key? key}) : super(key: key);
