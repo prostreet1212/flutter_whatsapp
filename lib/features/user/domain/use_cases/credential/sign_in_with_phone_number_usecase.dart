@@ -1,9 +1,9 @@
 import 'package:flutter_whatsapp/features/user/domain/repositories/user_repository.dart';
 
-class SignInUseCase{
+class SignInWithPhoneNumberUseCase{
   final UserRepository repository;
 
-  SignInUseCase({required this.repository});
+  SignInWithPhoneNumberUseCase({required this.repository});
 
   Future<void> call(String smsPinCode) async{
     return repository.signInWithPhoneNumber(smsPinCode);

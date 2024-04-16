@@ -2,6 +2,7 @@ import 'package:country_pickers/country.dart';
 import 'package:country_pickers/country_picker_dialog.dart';
 import 'package:country_pickers/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/theme/style.dart';
 import 'otp_page.dart';
@@ -26,6 +27,14 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocConsumer(
+        builder: (context,s){
+          return _bodyWidget();
+        },
+        listener: (context,s){});
+  }
+
+  _bodyWidget(){
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 30),
@@ -33,70 +42,70 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Expanded(
               child: Column(
-              children: [
-                const SizedBox(
-                  height: 40,
-                ),
-                const Center(
-                  child: Text(
-                    "Verify your phone number",
-                    style: TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.bold, color: tabColor),
+                children: [
+                  const SizedBox(
+                    height: 40,
                   ),
-                ),
-                const Text(
-                  "WhatsApp Clone will send you SMS message (carrier charges may apply) to verify your phone number. Enter the country code and phone number",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
-                ListTile(
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 2),
-                  onTap: _openFilteredCountryPickerDialog,
-                  title: _buildDialogItem(_selectedFilteredDialogCountry),
-                ),
-                Row(
-                  children: <Widget>[
-                    Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1.50,
-                            color: tabColor,
+                  const Center(
+                    child: Text(
+                      "Verify your phone number",
+                      style: TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold, color: tabColor),
+                    ),
+                  ),
+                  const Text(
+                    "WhatsApp Clone will send you SMS message (carrier charges may apply) to verify your phone number. Enter the country code and phone number",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 2),
+                    onTap: _openFilteredCountryPickerDialog,
+                    title: _buildDialogItem(_selectedFilteredDialogCountry),
+                  ),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              width: 1.50,
+                              color: tabColor,
+                            ),
+                          ),
+                        ),
+                        width: 80,
+                        height: 42,
+                        alignment: Alignment.center,
+                        child: Text(
+                            _selectedFilteredDialogCountry.phoneCode),
+                      ),
+                      const SizedBox(
+                        width: 8.0,
+                      ),
+                      Expanded(
+                        child: Container(
+                          height: 40,
+                          margin: const EdgeInsets.only(top: 1.5),
+                          decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom:
+                                  BorderSide(color: tabColor, width: 1.5))),
+                          child: TextField(
+                            controller: _phoneController,
+                            decoration: const InputDecoration(
+                                hintText: "Phone Number",
+                                border: InputBorder.none),
                           ),
                         ),
                       ),
-                      width: 80,
-                      height: 42,
-                      alignment: Alignment.center,
-                      child: Text(
-                          _selectedFilteredDialogCountry.phoneCode),
-                    ),
-                    const SizedBox(
-                      width: 8.0,
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: 40,
-                        margin: const EdgeInsets.only(top: 1.5),
-                        decoration: const BoxDecoration(
-                            border: Border(
-                                bottom:
-                                BorderSide(color: tabColor, width: 1.5))),
-                        child: TextField(
-                          controller: _phoneController,
-                          decoration: const InputDecoration(
-                              hintText: "Phone Number",
-                              border: InputBorder.none),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             GestureDetector(
               onTap: (){

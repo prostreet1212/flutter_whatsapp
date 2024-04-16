@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAVk8V7-TS7J7GopaYVlS3h20DAUuRtg3w</string>
+	<key>GCM_SENDER_ID</key>
+	<string>801943696503</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.flutterWhatsapp</string>
+	<key>PROJECT_ID</key>
+	<string>flutter-whatsapp-c9ffe</string>
+	<key>STORAGE_BUCKET</key>
+	<string>flutter-whatsapp-c9ffe.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:801943696503:ios:59ef79786c41448aff0272</string>
+</dict>
+</plist>
