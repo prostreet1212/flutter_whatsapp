@@ -8,7 +8,8 @@ import '../theme/style.dart';
 import 'contacts_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final String uid;
+  const HomePage({Key? key,required this.uid}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();

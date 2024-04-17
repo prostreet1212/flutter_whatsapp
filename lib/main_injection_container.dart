@@ -12,6 +12,9 @@ Future<void> init() async{
   final auth=FirebaseAuth.instance;
   final fireStore=FirebaseFirestore.instance;
 
+  sl.registerLazySingleton(() => auth);
+  sl.registerLazySingleton(() => fireStore);
+
   await userInjectionContainer();
 
 }

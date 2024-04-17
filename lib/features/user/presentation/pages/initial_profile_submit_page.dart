@@ -1,24 +1,31 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_whatsapp/features/app/home/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../storage/storage_provider.dart';
 import '../../../app/const/app_const.dart';
 import '../../../app/global/widgets/profile_widget.dart';
 import '../../../app/theme/style.dart';
+import '../../domain/entities/user_entity.dart';
+import '../cubit/credential/credential_cubit.dart';
 
-class InitalProfileSubmitPage extends StatefulWidget {
-  const InitalProfileSubmitPage({Key? key}) : super(key: key);
+class InitialProfileSubmitPage extends StatefulWidget {
+  final String phoneNumber;
+  const InitialProfileSubmitPage({Key? key,required this.phoneNumber}) : super(key: key);
 
   @override
-  State<InitalProfileSubmitPage> createState() => _InitalProfileSubmitPageState();
+  State<InitialProfileSubmitPage> createState() => _InitalProfileSubmitPageState();
 }
 
-class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
+class _InitalProfileSubmitPageState extends State<InitialProfileSubmitPage> {
 
   late final TextEditingController _usernameController;
   File? _image;
+
+
 
   @override
   void initState() {
@@ -32,7 +39,7 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
     super.dispose();
   }
 
-  final bool _isProfileUpdating = false;
+   bool _isProfileUpdating = false;
 
   Future selectImage() async {
     try {
@@ -92,9 +99,7 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
             ),
             const SizedBox(height: 20,),
             GestureDetector(
-              onTap: (){
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const HomePage()),(route)=>false);
-              },
+              onTap: submitProfileInfo,
               child: Container(
                 width: 150,
                 height: 40,
@@ -114,7 +119,7 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
   }
 
   void submitProfileInfo() {
-  /*  if(_image != null) {
+    if(_image != null) {
       StorageProviderRemoteDataSource.uploadProfileImage(
           file: _image!,
           onComplete: (onProfileUpdateComplete) {
@@ -129,6 +134,21 @@ class _InitalProfileSubmitPageState extends State<InitalProfileSubmitPage> {
       });
     } else {
       _profileInfo(profileUrl: "");
-    }*/
+    }
+  }
+
+  void _profileInfo({String? profileUrl}) {
+    if (_usernameController.text.isNotEmpty) {
+      BlocProvider.of<CredentialCubit>(context).submitProfileInfo(
+          user: UserEntity(
+            email: "",
+            username: _usernameController.text,
+            phoneNumber: widget.phoneNumber,
+            status: "Hey There! I'm using WhatsApp Clone",
+            isOnline: false,
+            profileUrl: profileUrl,
+          )
+      );
+    }
   }
 }
