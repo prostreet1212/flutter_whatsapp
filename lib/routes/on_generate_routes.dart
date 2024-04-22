@@ -22,7 +22,12 @@ class OnGenerateRoute{
         }
       case PageConst.settingsPage:
         {
-          return materialPageBuilder(SettingsPage());
+          if(args is String){
+            return materialPageBuilder(SettingsPage(uid: args,));
+          }else{
+            return materialPageBuilder(const ErrorPage());
+          }
+
         }
       case PageConst.callContactsPage: {
         return materialPageBuilder(const CallContactsPage());

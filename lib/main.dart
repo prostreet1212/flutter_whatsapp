@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_whatsapp/features/app/home/home_page.dart';
 import 'package:flutter_whatsapp/features/app/theme/style.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/auth/auth_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/credential/credential_cubit.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context)=>di.sl<AuthCubit>()),
+        BlocProvider(create: (context)=>di.sl<AuthCubit>()..appStarted()),
         BlocProvider(create: (context)=>di.sl<CredentialCubit>()),
         BlocProvider(create: (context)=>di.sl<GetSingleUserCubit>()),
         BlocProvider(create: (context)=>di.sl<UserCubit>()),
@@ -51,7 +52,15 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         onGenerateRoute: OnGenerateRoute.route,
         routes: {
-      '/':(context)=>SplashScreen()
+      '/':(context){
+        return BlocBuilder<AuthCubit,AuthState>(
+            builder: (context,authState){
+              if(authState is Authenticated){
+                return HomePage(uid: authState.uid);
+              }
+              return const SplashScreen();
+            });
+      }
         },
       ),
     );
