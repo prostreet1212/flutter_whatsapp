@@ -33,6 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: Column(
         children: [
+          
           Container(
             margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
             child: BlocBuilder<GetSingleUserCubit,GetSingleUserState>(
