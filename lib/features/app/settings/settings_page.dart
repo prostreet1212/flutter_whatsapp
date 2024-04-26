@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_whatsapp/features/app/const/page_const.dart';
+import 'package:flutter_whatsapp/features/app/global/widgets/dialog_widget.dart';
 import 'package:flutter_whatsapp/features/user/domain/entities/user_entity.dart';
+import 'package:flutter_whatsapp/features/user/presentation/cubit/auth/auth_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/get_single_user/get_single_user_cubit.dart';
 
 import '../global/widgets/profile_widget.dart';
@@ -11,7 +13,8 @@ import '../theme/style.dart';
 
 class SettingsPage extends StatefulWidget {
   final String uid;
-  const SettingsPage({super.key,required this.uid});
+
+  const SettingsPage({super.key, required this.uid});
 
   @override
   State<SettingsPage> createState() => _SettingsPageState();
@@ -33,18 +36,18 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
       body: Column(
         children: [
-          
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
-            child: BlocBuilder<GetSingleUserCubit,GetSingleUserState>(
-              builder: (context,state){
-                if(state is GetSingleUserLoaded){
-                  UserEntity singleUser=state.singleUser;
-                  return  Row(
+            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            child: BlocBuilder<GetSingleUserCubit, GetSingleUserState>(
+              builder: (context, state) {
+                if (state is GetSingleUserLoaded) {
+                  UserEntity singleUser = state.singleUser;
+                  return Row(
                     children: [
                       GestureDetector(
-                        onTap:(){
-                          Navigator.pushNamed(context, PageConst.editProfilePage);
+                        onTap: () {
+                          Navigator.pushNamed(context,
+                              PageConst.editProfilePage, arguments: singleUser);
                         },
                         child: SizedBox(
                           width: 65,
@@ -81,10 +84,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     ],
                   );
                 }
-                return  Row(
+                return Row(
                   children: [
                     GestureDetector(
-                      onTap:(){
+                      onTap: () {
                         Navigator.pushNamed(context, PageConst.editProfilePage);
                       },
                       child: SizedBox(
@@ -156,6 +159,13 @@ class _SettingsPageState extends State<SettingsPage> {
               description: "Logout from WhatsApp Clone",
               icon: Icons.exit_to_app,
               onTap: () {
+                displayAlertDialog(context,
+                    onTap: (){
+                  BlocProvider.of<AuthCubit>(context).loggedOut();
+                  Navigator.pushNamedAndRemoveUntil(context, PageConst.welcomePage, (route) => false);
+                    },
+                    confirmTitle: 'Logout',
+                    content: 'Are you sure you want to logout?');
               }
           ),
         ],
@@ -163,12 +173,15 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  _settingsItemWidget({String? title, String? description, IconData? icon, VoidCallback? onTap}) {
+  _settingsItemWidget(
+      {String? title, String? description, IconData? icon, VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Row(
         children: [
-          SizedBox(width: 80, height: 80, child: Icon(icon, color: greyColor, size: 25,)),
+          SizedBox(width: 80,
+              height: 80,
+              child: Icon(icon, color: greyColor, size: 25,)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

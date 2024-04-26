@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_whatsapp/features/app/const/page_const.dart';
 import 'package:flutter_whatsapp/features/app/home/contacts_page.dart';
 import 'package:flutter_whatsapp/features/status/presentation/pages/my_status_page.dart';
+import 'package:flutter_whatsapp/features/user/domain/entities/user_entity.dart';
+import 'package:flutter_whatsapp/features/user/presentation/pages/edit_profile_page.dart';
 
 import '../features/app/settings/settings_page.dart';
 import '../features/call/presentation/pages/call_contacts_page.dart';
@@ -27,8 +29,16 @@ class OnGenerateRoute{
           }else{
             return materialPageBuilder(const ErrorPage());
           }
-
         }
+      case PageConst.editProfilePage:
+        {
+          if(args is UserEntity){
+            return materialPageBuilder(EditProfilePage(currentUser: args,));
+          }else{
+            return materialPageBuilder(const ErrorPage());
+          }
+        }
+
       case PageConst.callContactsPage: {
         return materialPageBuilder(const CallContactsPage());
       }

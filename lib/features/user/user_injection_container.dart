@@ -78,6 +78,7 @@ Future<void> userInjectionContainer() async {
 
   sl.registerLazySingleton<GetDeviceNumberUseCase>(
           () => GetDeviceNumberUseCase(repository: sl.call()));
+
   // * REPOSITORY & DATA SOURCES INJECTION
   sl.registerLazySingleton<UserRepository>(
           () => UserRepositoryImpl(remoteDataSource: sl.call()));

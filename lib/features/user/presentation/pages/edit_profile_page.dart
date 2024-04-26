@@ -30,7 +30,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future selectImage() async {
     try {
-      final pickedFile = await ImagePicker.platform.getImage(source: ImageSource.gallery);
+      final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+          //.platform.getImage(source: ImageSource.gallery);
 
       setState(() {
         if (pickedFile != null) {
