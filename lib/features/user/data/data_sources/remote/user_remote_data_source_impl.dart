@@ -10,7 +10,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../models/user_model.dart';
 
-
 class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   final FirebaseFirestore fireStore;
   final FirebaseAuth auth;
@@ -47,10 +46,15 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
   }
 
   @override
-  Stream<List<UserEntity>> getAllUsers() {
+  Stream<List<UserEntity>> getAllUsers(String uid) {
     final userCollection = fireStore.collection(FirebaseCollectionConst.users);
-    return userCollection.snapshots().map((querySnapshot) =>
-        querySnapshot.docs.map((e) => UserModel.fromSnapshot(e)).toList());
+    return userCollection
+    .where('uid',isNotEqualTo: uid)
+        .snapshots()
+        .map((querySnapshot) => querySnapshot.docs.map((e) {
+              UserEntity user = UserModel.fromSnapshot(e);
+                return user;
+            }).toList());
   }
 
   @override
@@ -66,9 +70,9 @@ class UserRemoteDataSourceImpl extends UserRemoteDataSource {
           withProperties: true, withPhoto: true);
       for (var contact in contacts) {
         contactsList.add(ContactEntity(
-            name: contact.name,
-            photo: contact.photo,
-            phones:contact.phones,
+          name: contact.name,
+          photo: contact.photo,
+          phones: contact.phones,
         ));
       }
     }

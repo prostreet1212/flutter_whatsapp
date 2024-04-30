@@ -13,7 +13,7 @@ class UserRepositoryImpl implements UserRepository {
       remoteDataSource.createUser(user);
 
   @override
-  Stream<List<UserEntity>> getAllUsers() => remoteDataSource.getAllUsers();
+  Stream<List<UserEntity>> getAllUsers(String uid) => remoteDataSource.getAllUsers(uid);
 
   @override
   Future<String> getCurrentUID() async => remoteDataSource.getCurrentUID();

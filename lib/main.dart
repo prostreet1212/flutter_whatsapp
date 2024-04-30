@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_whatsapp/features/app/home/home_page.dart';
 import 'package:flutter_whatsapp/features/app/theme/style.dart';
+import 'package:flutter_whatsapp/features/chat/presentation/cubit/chat/chat_cubit.dart';
+import 'package:flutter_whatsapp/features/chat/presentation/cubit/message/message_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/auth/auth_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/credential/credential_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/get_device_number/get_device_number_cubit.dart';
@@ -15,7 +17,6 @@ import 'package:flutter_whatsapp/routes/on_generate_routes.dart';
 import 'features/app/splash/splash_screen.dart';
 
 import 'main_injection_container.dart' as di;
-import 'main_injection_container.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context)=>di.sl<GetSingleUserCubit>()),
         BlocProvider(create: (context)=>di.sl<UserCubit>()),
         BlocProvider(create: (context)=>di.sl<GetDeviceNumberCubit>()),
+        BlocProvider(create: (context)=>di.sl<ChatCubit>()),
+        BlocProvider(create: (context)=>di.sl<MessageCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

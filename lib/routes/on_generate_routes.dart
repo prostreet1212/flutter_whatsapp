@@ -20,7 +20,11 @@ class OnGenerateRoute{
     switch (name) {
       case PageConst.contactUsersPage:
         {
-          return materialPageBuilder(ContactsPage());
+          if(args is String) {
+            return materialPageBuilder(ContactsPage(uid: args,));
+          }else{
+            return materialPageBuilder(const ErrorPage());
+          }
         }
       case PageConst.settingsPage:
         {

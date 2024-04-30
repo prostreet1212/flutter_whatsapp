@@ -8,8 +8,8 @@ class GetAllUsersUseCase {
 
   GetAllUsersUseCase({required this.repository});
 
-  Stream<List<UserEntity>> call() {
-    return repository.getAllUsers();
+  Stream<List<UserEntity>> call(String uid) {
+    return repository.getAllUsers( uid);
   }
 
 }

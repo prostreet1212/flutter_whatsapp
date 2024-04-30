@@ -16,9 +16,9 @@ class UserCubit extends Cubit<UserState> {
     required this.getAllUsersUseCase,
   }) : super(UserInitial());
 
-  Future<void> getAllUsers() async {
+  Future<void> getAllUsers(String uid) async {
     emit(UserLoading());
-    final streamResponse = getAllUsersUseCase.call();
+    final streamResponse = getAllUsersUseCase.call(uid);
     streamResponse.listen((users) {
       emit(UserLoaded(users: users));
     });
