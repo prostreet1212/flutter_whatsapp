@@ -46,7 +46,8 @@ class CredentialCubit extends Cubit<CredentialState> {
     try {
       await createUserUseCase.call(user);
       emit(CredentialSuccess());
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      print(e);
       emit(CredentialFailure());
     } catch (_) {
       emit(CredentialFailure());

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../domain/entities/chat_entity.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../../../domain/repositories/get_messages_usecase.dart';
 import '../../../domain/repositories/send_message_usecase.dart';
@@ -35,6 +36,16 @@ class MessageCubit extends Cubit<MessageState> {
     }
   }
 
+  Future<void> sendMessage({required ChatEntity chat, required MessageEntity message}) async {
+    try {
 
+      await sendMessageUseCase.call(chat, message);
+
+    } on SocketException {
+      emit(MessageFailure());
+    } catch (_) {
+      emit(MessageFailure());
+    }
+  }
 
 }
