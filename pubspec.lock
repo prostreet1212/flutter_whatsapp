@@ -532,10 +532,10 @@ packages:
     dependency: "direct main"
     description:
       name: giphy_picker
-      sha256: "56de5f9fbc9a067f33f8311311e78004f2629fb1c924c788c9d268f98193b89d"
+      sha256: e0e82a034813e486e01b18fa277ae1ceca7970b2c5096e4d396540ba3c5869f1
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.2"
+    version: "2.0.0"
   html:
     dependency: transitive
     description:
@@ -548,10 +548,10 @@ packages:
     dependency: transitive
     description:
       name: http
-      sha256: "761a297c042deedc1ffbb156d6e2af13886bb305c2a343a4d972504cd67dd938"
+      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.1"
+    version: "0.13.6"
   http_parser:
     dependency: transitive
     description:

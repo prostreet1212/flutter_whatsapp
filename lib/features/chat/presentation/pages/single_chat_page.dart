@@ -9,9 +9,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:flutter_whatsapp/features/app/const/message_type_const.dart';
 import 'package:flutter_whatsapp/features/app/global/widgets/show_image_picked_widget.dart';
+import 'package:flutter_whatsapp/features/app/global/widgets/show_video_picked_widget.dart';
 import 'package:flutter_whatsapp/features/chat/domain/entities/chat_entity.dart';
 import 'package:flutter_whatsapp/features/chat/domain/entities/message_entity.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/message/message_cubit.dart';
+import 'package:flutter_whatsapp/features/chat/presentation/pages/message_widgets/message_type_widget.dart';
 import 'package:flutter_whatsapp/features/user/presentation/widgets/chat_utils.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -193,6 +195,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
                             var message = messages[index];
                             if (message.senderUid == widget.message.senderUid) {
                               return _messageLayout(
+                                messageType: message.messageType,
                                   message: message.message,
                                   alignment: Alignment.centerRight,
                                   createAt: message.createdAt,
@@ -203,6 +206,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   onSwipe: () {});
                             } else {
                               return _messageLayout(
+                                  messageType: message.messageType,
                                   message: message.message,
                                   alignment: Alignment.centerLeft,
                                   createAt: message.createdAt,
@@ -417,12 +421,32 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                         icon: Icons.gif_box_outlined,
                                         color: Colors.indigoAccent,
                                         title: "Gif",
-                                        onTap: () {}),
+                                        onTap: () {
+                                          _sendGifMessage();
+                                        }),
                                     _attachWindowItem(
                                         icon: Icons.videocam_rounded,
                                         color: Colors.lightGreen,
                                         title: "Video",
                                         onTap: () {
+                                          selectVideo().then((value) {
+                                            if (_video != null) {
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback(
+                                                      (timeStamp) {
+                                                    showVideoPickedBottomModalSheet(
+                                                        context,
+                                                        recipientName: widget
+                                                            .message
+                                                            .recipientName,
+                                                        file: _video,
+                                                        onTap: () {
+                                                          _sendVideoMessage();
+                                                          Navigator.pop(context);
+                                                        });
+                                                  });
+                                            }
+                                          });
                                           setState(() {
                                             _isShowAttachWindow = false;
                                           });
@@ -454,6 +478,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
     Timestamp? createAt,
     VoidCallback? onSwipe,
     String? message,
+    String? messageType,
     bool? isShowTick,
     bool? isSeen,
     VoidCallback? onLongPress,
@@ -475,16 +500,17 @@ class _SingleChatPageState extends State<SingleChatPage> {
                     Container(
                         margin: const EdgeInsets.only(top: 10),
                         padding: EdgeInsets.only(
-                            left: 5, right: 85, top: 5, bottom: 5),
+                            left: 5, right: messageType == MessageTypeConst.textMessage ? 88 : 5, top: 5, bottom: 5),
                         constraints: BoxConstraints(
                             maxWidth: MediaQuery.of(context).size.width * 0.80),
                         decoration: BoxDecoration(
                             color: messageBgColor,
                             borderRadius: BorderRadius.circular(8)),
-                        child: Text(
-                          '$message',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        )),
+                        child: MessageTypeWidget(
+                          message: message,
+                            type: messageType,
+                        )
+                    ),
                     const SizedBox(height: 3),
                   ],
                 ),
