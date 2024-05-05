@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:flutter_whatsapp/features/app/const/message_type_const.dart';
+import 'package:flutter_whatsapp/features/app/global/widgets/show_image_picked_widget.dart';
 import 'package:flutter_whatsapp/features/chat/domain/entities/chat_entity.dart';
 import 'package:flutter_whatsapp/features/chat/domain/entities/message_entity.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/message/message_cubit.dart';
@@ -32,7 +33,7 @@ class SingleChatPage extends StatefulWidget {
 
 class _SingleChatPageState extends State<SingleChatPage> {
   final TextEditingController _textMessageController = TextEditingController();
-  final ScrollController _scrollController  = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _isDisplaySendButton = false;
   bool _isShowAttachWindow = false;
 
@@ -45,8 +46,8 @@ class _SingleChatPageState extends State<SingleChatPage> {
     super.initState();
     _soundRecorder = FlutterSoundRecorder();
     _openAudioRecording();
-    BlocProvider.of<MessageCubit>(context)
-        .getMessages(message: MessageEntity(
+    BlocProvider.of<MessageCubit>(context).getMessages(
+        message: MessageEntity(
       senderUid: widget.message.senderUid,
       recipientUid: widget.message.recipientUid,
     ));
@@ -78,8 +79,8 @@ class _SingleChatPageState extends State<SingleChatPage> {
     setState(() => _image = null);
     try {
       final pickedFile =
-      //await ImagePicker.platform.getImage(source: ImageSource.gallery);
-     await ImagePicker().pickImage(source: ImageSource.gallery);
+          //await ImagePicker.platform.getImage(source: ImageSource.gallery);
+          await ImagePicker().pickImage(source: ImageSource.gallery);
       setState(() {
         if (pickedFile != null) {
           _image = File(pickedFile.path);
@@ -98,8 +99,8 @@ class _SingleChatPageState extends State<SingleChatPage> {
     setState(() => _image = null);
     try {
       final pickedFile =
-      //await ImagePicker.platform.pickVideo(source: ImageSource.gallery);
-      await ImagePicker().pickVideo(source: ImageSource.gallery);
+          //await ImagePicker.platform.pickVideo(source: ImageSource.gallery);
+          await ImagePicker().pickVideo(source: ImageSource.gallery);
 
       setState(() {
         if (pickedFile != null) {
@@ -199,8 +200,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isShowTick: true,
                                   messageBgColor: messageColor,
                                   onLongPress: () {},
-                                  onSwipe: () {}
-                              );
+                                  onSwipe: () {});
                             } else {
                               return _messageLayout(
                                   message: message.message,
@@ -210,11 +210,9 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isShowTick: false,
                                   messageBgColor: senderMessageColor,
                                   onLongPress: () {},
-                                  onSwipe: () {}
-                              );
+                                  onSwipe: () {});
                             }
                           },
-
                         ),
                       ),
                       Container(
@@ -225,7 +223,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
                             Expanded(
                               child: Container(
                                 padding:
-                                const EdgeInsets.symmetric(horizontal: 5),
+                                    const EdgeInsets.symmetric(horizontal: 5),
                                 decoration: BoxDecoration(
                                     color: appBarColor,
                                     borderRadius: BorderRadius.circular(25)),
@@ -251,8 +249,8 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                     }
                                   },
                                   decoration: InputDecoration(
-                                    contentPadding:
-                                    const EdgeInsets.symmetric(vertical: 15),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 15),
                                     prefixIcon: Icon(Icons.emoji_emotions,
                                         color: greyColor),
                                     suffixIcon: Padding(
@@ -265,7 +263,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                               onTap: () {
                                                 setState(() {
                                                   _isShowAttachWindow =
-                                                  !_isShowAttachWindow;
+                                                      !_isShowAttachWindow;
                                                 });
                                               },
                                               child: const Icon(
@@ -277,9 +275,31 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                           const SizedBox(
                                             width: 15,
                                           ),
-                                          const Icon(
-                                            Icons.camera_alt,
-                                            color: greyColor,
+                                          GestureDetector(
+                                            onTap: () {
+                                              selectImage().then((value) {
+                                                if (_image != null) {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (timeStamp) {
+                                                    showImagePickedBottomModalSheet(
+                                                        context,
+                                                        recipientName: widget
+                                                            .message
+                                                            .recipientName,
+                                                        file: _image,
+                                                        onTap: () {
+                                                      _sendImageMessage();
+                                                      Navigator.pop(context);
+                                                    });
+                                                  });
+                                                }
+                                              });
+                                            },
+                                            child: const Icon(
+                                              Icons.camera_alt,
+                                              color: greyColor,
+                                            ),
                                           ),
                                           const SizedBox(
                                             width: 10,
@@ -297,8 +317,8 @@ class _SingleChatPageState extends State<SingleChatPage> {
                               width: 10,
                             ),
                             GestureDetector(
-                              onTap: (){
-                             _sendTextMessage();
+                              onTap: () {
+                                _sendTextMessage();
                               },
                               child: Container(
                                 width: 50,
@@ -310,8 +330,9 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   child: Icon(
                                     _isDisplaySendButton
                                         ? Icons.send_outlined
-                                        : _isRecording?Icons.close:
-                                    Icons.mic,
+                                        : _isRecording
+                                            ? Icons.close
+                                            : Icons.mic,
                                     color: Colors.white,
                                   ),
                                 ),
@@ -324,97 +345,94 @@ class _SingleChatPageState extends State<SingleChatPage> {
                   ),
                   _isShowAttachWindow == true
                       ? Positioned(
-                    bottom: 65,
-                    top: 320,
-                    left: 15,
-                    right: 15,
-                    child: Container(
-                      width: double.infinity,
-                      height: MediaQuery
-                          .of(context)
-                          .size
-                          .width * 0.20,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 20),
-                      decoration: BoxDecoration(
-                        color: bottomAttachContainerColor,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _attachWindowItem(
-                                icon: Icons.document_scanner,
-                                color: Colors.deepPurpleAccent,
-                                title: "Document",
-                              ),
-                              _attachWindowItem(
-                                  icon: Icons.camera_alt,
-                                  color: Colors.pinkAccent,
-                                  title: "Camera",
-                                  onTap: () {}),
-                              _attachWindowItem(
-                                  icon: Icons.image,
-                                  color: Colors.purpleAccent,
-                                  title: "Gallery"),
-                            ],
+                          bottom: 65,
+                          top: 320,
+                          left: 15,
+                          right: 15,
+                          child: Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.width * 0.20,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5, vertical: 20),
+                            decoration: BoxDecoration(
+                              color: bottomAttachContainerColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _attachWindowItem(
+                                      icon: Icons.document_scanner,
+                                      color: Colors.deepPurpleAccent,
+                                      title: "Document",
+                                    ),
+                                    _attachWindowItem(
+                                        icon: Icons.camera_alt,
+                                        color: Colors.pinkAccent,
+                                        title: "Camera",
+                                        onTap: () {}),
+                                    _attachWindowItem(
+                                        icon: Icons.image,
+                                        color: Colors.purpleAccent,
+                                        title: "Gallery"),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _attachWindowItem(
+                                        icon: Icons.headphones,
+                                        color: Colors.deepOrange,
+                                        title: "Audio"),
+                                    _attachWindowItem(
+                                        icon: Icons.location_on,
+                                        color: Colors.green,
+                                        title: "Location"),
+                                    _attachWindowItem(
+                                        icon: Icons.account_circle,
+                                        color: Colors.deepPurpleAccent,
+                                        title: "Contact"),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    _attachWindowItem(
+                                      icon: Icons.bar_chart,
+                                      color: tabColor,
+                                      title: "Poll",
+                                    ),
+                                    _attachWindowItem(
+                                        icon: Icons.gif_box_outlined,
+                                        color: Colors.indigoAccent,
+                                        title: "Gif",
+                                        onTap: () {}),
+                                    _attachWindowItem(
+                                        icon: Icons.videocam_rounded,
+                                        color: Colors.lightGreen,
+                                        title: "Video",
+                                        onTap: () {
+                                          setState(() {
+                                            _isShowAttachWindow = false;
+                                          });
+                                        }),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _attachWindowItem(
-                                  icon: Icons.headphones,
-                                  color: Colors.deepOrange,
-                                  title: "Audio"),
-                              _attachWindowItem(
-                                  icon: Icons.location_on,
-                                  color: Colors.green,
-                                  title: "Location"),
-                              _attachWindowItem(
-                                  icon: Icons.account_circle,
-                                  color: Colors.deepPurpleAccent,
-                                  title: "Contact"),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _attachWindowItem(
-                                icon: Icons.bar_chart,
-                                color: tabColor,
-                                title: "Poll",
-                              ),
-                              _attachWindowItem(
-                                  icon: Icons.gif_box_outlined,
-                                  color: Colors.indigoAccent,
-                                  title: "Gif",
-                                  onTap: () {}),
-                              _attachWindowItem(
-                                  icon: Icons.videocam_rounded,
-                                  color: Colors.lightGreen,
-                                  title: "Video",
-                                  onTap: () {
-                                    setState(() {
-                                      _isShowAttachWindow = false;
-                                    });
-                                  }),
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  )
+                        )
                       : Container(),
                 ],
               ),
@@ -459,10 +477,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
                         padding: EdgeInsets.only(
                             left: 5, right: 85, top: 5, bottom: 5),
                         constraints: BoxConstraints(
-                            maxWidth: MediaQuery
-                                .of(context)
-                                .size
-                                .width * 0.80),
+                            maxWidth: MediaQuery.of(context).size.width * 0.80),
                         decoration: BoxDecoration(
                             color: messageBgColor,
                             borderRadius: BorderRadius.circular(8)),
@@ -480,16 +495,16 @@ class _SingleChatPageState extends State<SingleChatPage> {
                     children: [
                       Text(DateFormat.jm().format(createAt!.toDate()),
                           style:
-                          const TextStyle(fontSize: 12, color: greyColor)),
+                              const TextStyle(fontSize: 12, color: greyColor)),
                       const SizedBox(
                         width: 5,
                       ),
                       isShowTick == true
                           ? Icon(
-                        isSeen == true ? Icons.done_all : Icons.done,
-                        size: 16,
-                        color: isSeen == true ? Colors.blue : greyColor,
-                      )
+                              isSeen == true ? Icons.done_all : Icons.done,
+                              size: 16,
+                              color: isSeen == true ? Colors.blue : greyColor,
+                            )
                           : Container()
                     ],
                   ),
@@ -528,12 +543,13 @@ class _SingleChatPageState extends State<SingleChatPage> {
     );
   }
 
-  _sendTextMessage()async{
-    if(_isDisplaySendButton){
+  _sendTextMessage() async {
+    if (_isDisplaySendButton) {
       _sendMessage(
         message: _textMessageController.text,
-        type: MessageTypeConst.textMessage,);
-    }else{
+        type: MessageTypeConst.textMessage,
+      );
+    } else {
       final temporaryDir = await getTemporaryDirectory();
       final audioPath = '${temporaryDir.path}/flutter_sound.aac';
       if (!_isRecordInit) {
@@ -558,9 +574,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
       setState(() {
         _isRecording = !_isRecording;
       });
-
     }
-
   }
 
   void _sendImageMessage() {
@@ -595,24 +609,26 @@ class _SingleChatPageState extends State<SingleChatPage> {
     }
   }
 
-  void _sendMessage({required String message,
-    required String type,
-    String? repliedMessage,
-    String? repliedTo,
-    String? repliedMessageType}) {
+  void _sendMessage(
+      {required String message,
+      required String type,
+      String? repliedMessage,
+      String? repliedTo,
+      String? repliedMessageType}) {
     _scrollToBottom();
-    ChatUtils.sendMessage(context, messageEntity: widget.message,
+    ChatUtils.sendMessage(
+      context,
+      messageEntity: widget.message,
       message: message,
       type: type,
       repliedTo: repliedTo,
       repliedMessageType: repliedMessageType,
-      repliedMessage: repliedMessage,)
-        .then((value){
-          setState(() {
-            _textMessageController.clear();
-          });
-          _scrollToBottom();
+      repliedMessage: repliedMessage,
+    ).then((value) {
+      setState(() {
+        _textMessageController.clear();
+      });
+      _scrollToBottom();
     });
   }
-
 }
