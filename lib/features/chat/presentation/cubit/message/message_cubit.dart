@@ -36,6 +36,20 @@ class MessageCubit extends Cubit<MessageState> {
     }
   }
 
+  Future<void> deleteMessage({required MessageEntity message}) async {
+    try {
+
+      await deleteMessageUseCase.call(message);
+
+    } on SocketException {
+      emit(MessageFailure());
+    } catch (_) {
+      emit(MessageFailure());
+    }
+  }
+
+
+
   Future<void> sendMessage({required ChatEntity chat, required MessageEntity message}) async {
     try {
 
@@ -47,5 +61,7 @@ class MessageCubit extends Cubit<MessageState> {
       emit(MessageFailure());
     }
   }
+
+
 
 }

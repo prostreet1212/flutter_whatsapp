@@ -22,6 +22,7 @@ import 'package:swipe_to/swipe_to.dart';
 
 import '../../../../storage/storage_provider.dart';
 import '../../../app/const/app_const.dart';
+import '../../../app/global/widgets/dialog_widget.dart';
 import '../../../app/theme/style.dart';
 
 class SingleChatPage extends StatefulWidget {
@@ -202,8 +203,23 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isSeen: message.isSeen,
                                   isShowTick: true,
                                   messageBgColor: messageColor,
-                                  onLongPress: () {},
-                                  onSwipe: () {});
+                                  onLongPress: () {
+                                    displayAlertDialog(
+                                        context,
+                                        onTap: () {
+                                          BlocProvider.of<MessageCubit>(context).deleteMessage(message: MessageEntity(
+                                              senderUid: widget.message.senderUid,
+                                              recipientUid: widget.message.recipientUid,
+                                              messageId: message.messageId
+                                          ));
+                                          Navigator.pop(context);
+                                        },
+                                        confirmTitle: "Delete",
+                                        content: "Are you sure you want to delete this message?"
+                                    );
+                                  },
+                                  onSwipe: () {
+                                  });
                             } else {
                               return _messageLayout(
                                   messageType: message.messageType,
@@ -213,7 +229,21 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isSeen: message.isSeen,
                                   isShowTick: false,
                                   messageBgColor: senderMessageColor,
-                                  onLongPress: () {},
+                                  onLongPress: () {
+                                    displayAlertDialog(
+                                        context,
+                                        onTap: () {
+                                          BlocProvider.of<MessageCubit>(context).deleteMessage(message: MessageEntity(
+                                              senderUid: widget.message.senderUid,
+                                              recipientUid: widget.message.recipientUid,
+                                              messageId: message.messageId
+                                          ));
+                                          Navigator.pop(context);
+                                        },
+                                        confirmTitle: "Delete",
+                                        content: "Are you sure you want to delete this message?"
+                                    );
+                                  },
                                   onSwipe: () {});
                             }
                           },
