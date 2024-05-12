@@ -7,7 +7,7 @@ import '../../../../app/theme/style.dart';
 import '../../cubit/message/message_cubit.dart';
 import 'message_replay_type_widget.dart';
 
-/*
+
 class MessageReplayPreviewWidget extends StatelessWidget {
   final VoidCallback? onCancelReplayListener;
   const MessageReplayPreviewWidget({Key? key, this.onCancelReplayListener}) : super(key: key);
@@ -78,4 +78,3 @@ class MessageReplayPreviewWidget extends StatelessWidget {
 
   }
 }
-*/

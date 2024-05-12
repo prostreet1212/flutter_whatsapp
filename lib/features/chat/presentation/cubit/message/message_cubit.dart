@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../domain/entities/chat_entity.dart';
 import '../../../domain/entities/message_entity.dart';
+import '../../../domain/entities/message_reply_entity.dart';
 import '../../../domain/repositories/get_messages_usecase.dart';
 import '../../../domain/repositories/send_message_usecase.dart';
 import '../../../domain/use_cases/delete_message_usecase.dart';
@@ -62,6 +63,13 @@ class MessageCubit extends Cubit<MessageState> {
     }
   }
 
+  MessageReplayEntity messageReplay = MessageReplayEntity();
+
+  MessageReplayEntity get getMessageReplay => MessageReplayEntity();
+
+  set setMessageReplay(MessageReplayEntity messageReplay) {
+    this.messageReplay = messageReplay;
+  }
 
 
 }

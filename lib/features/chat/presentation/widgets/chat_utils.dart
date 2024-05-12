@@ -5,9 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../chat/domain/entities/chat_entity.dart';
-import '../../../chat/domain/entities/message_entity.dart';
-import '../../../chat/presentation/cubit/message/message_cubit.dart';
+import '../../domain/entities/chat_entity.dart';
+import '../../domain/entities/message_entity.dart';
+import '../cubit/message/message_cubit.dart';
 
 class ChatUtils {
 
