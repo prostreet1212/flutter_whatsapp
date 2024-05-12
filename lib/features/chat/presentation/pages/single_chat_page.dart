@@ -24,6 +24,7 @@ import '../../../app/global/widgets/dialog_widget.dart';
 import '../../../app/theme/style.dart';
 import '../../domain/entities/message_reply_entity.dart';
 import '../widgets/message_widgets/message_replay_preview_widget.dart';
+import '../widgets/message_widgets/message_replay_type_widget.dart';
 import '../widgets/message_widgets/message_type_widget.dart';
 
 class SingleChatPage extends StatefulWidget {
@@ -220,6 +221,12 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isSeen: message.isSeen,
                                   isShowTick: true,
                                   messageBgColor: messageColor,
+                                  rightPadding: message.repliedMessage == "" ? 85 : 5,
+                                  reply: MessageReplayEntity(
+                                      message: message.repliedMessage,
+                                      messageType: message.repliedMessageType,
+                                      username: message.repliedTo
+                                  ),
                                   onLongPress: () {
                                     displayAlertDialog(context, onTap: () {
                                       BlocProvider.of<MessageCubit>(context)
@@ -255,6 +262,12 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isSeen: message.isSeen,
                                   isShowTick: false,
                                   messageBgColor: senderMessageColor,
+                                  rightPadding: message.repliedMessage == "" ? 85 : 5,
+                                  reply: MessageReplayEntity(
+                                      message: message.repliedMessage,
+                                      messageType: message.repliedMessageType,
+                                      username: message.repliedTo
+                                  ),
                                   onLongPress: () {
                                     displayAlertDialog(context, onTap: () {
                                       BlocProvider.of<MessageCubit>(context)
@@ -312,7 +325,10 @@ class _SingleChatPageState extends State<SingleChatPage> {
                           : Container(),
                       Container(
                         margin: EdgeInsets.only(
-                            left: 10, right: 10, top: 5, bottom: 5),
+                            left: 10,
+                            right: 10,
+                            top: _isReplying == true ? 0 : 5,
+                            bottom: 5),
                         child: Row(
                           children: [
                             Expanded(
@@ -321,7 +337,11 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                     const EdgeInsets.symmetric(horizontal: 5),
                                 decoration: BoxDecoration(
                                     color: appBarColor,
-                                    borderRadius: BorderRadius.circular(25)),
+                                    borderRadius: _isReplying == true
+                                        ? const BorderRadius.only(
+                                            bottomLeft: Radius.circular(25),
+                                            bottomRight: Radius.circular(25))
+                                        : BorderRadius.circular(25)),
                                 height: 50,
                                 child: TextField(
                                   onTap: () {
@@ -565,17 +585,19 @@ class _SingleChatPageState extends State<SingleChatPage> {
     Color? messageBgColor,
     Alignment? alignment,
     Timestamp? createAt,
-    required VoidCallback? onSwipe(DragUpdateDetails a),
+    required VoidCallback? Function(DragUpdateDetails d) onSwipe,
     String? message,
     String? messageType,
     bool? isShowTick,
     bool? isSeen,
     VoidCallback? onLongPress,
+    MessageReplayEntity? reply,
+    double? rightPadding
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: SwipeTo(
-        onRightSwipe:onSwipe,
+        onRightSwipe: onSwipe,
         child: GestureDetector(
           onLongPress: onLongPress,
           child: Container(
@@ -586,42 +608,91 @@ class _SingleChatPageState extends State<SingleChatPage> {
                   children: [
                     Container(
                         margin: const EdgeInsets.only(top: 10),
-                        padding: EdgeInsets.only(
-                            left: 5,
-                            right: messageType == MessageTypeConst.textMessage
-                                ? 88
-                                : 5,
-                            top: 5,
-                            bottom: 5),
-                        constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.80),
-                        decoration: BoxDecoration(
-                            color: messageBgColor,
-                            borderRadius: BorderRadius.circular(8)),
-                        child: MessageTypeWidget(
-                          message: message,
-                          type: messageType,
-                        )),
+                        padding: EdgeInsets.only(left: 5, right: messageType == MessageTypeConst.textMessage ? rightPadding! : 5, top: 5, bottom: 5),
+                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.80),
+                        decoration: BoxDecoration(color: messageBgColor, borderRadius: BorderRadius.circular(8)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            reply?.message == null || reply?.message == ""
+                                ? const SizedBox() :Container(
+                              height: reply!.messageType ==
+                                  MessageTypeConst.textMessage ? 70 : 80,
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(.2),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: double.infinity,
+                                    width: 4.5,
+                                    decoration: BoxDecoration(
+                                        color: reply.username == widget.message.recipientName ? Colors.deepPurpleAccent
+                                            : tabColor,
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(15),
+                                            bottomLeft:
+                                            Radius.circular(15))),
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 5.0, vertical: 5),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "${reply.username == widget.message.recipientName ? reply.username : "You"}",
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: reply.username == widget.message.recipientName
+                                                    ? Colors.deepPurpleAccent
+                                                    : tabColor
+                                            ),
+                                          ),
+                                          MessageReplayTypeWidget(
+                                            message: reply.message,
+                                            type: reply.messageType,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 3,
+                            ),
+
+                            MessageTypeWidget(
+                              message: message,
+                              type: messageType,
+                            ),
+                          ],
+                        )
+                    ),
                     const SizedBox(height: 3),
                   ],
                 ),
                 Positioned(
                   bottom: 4,
-                  right: 10,
+                  right: 5,
                   child: Row(
                     children: [
                       Text(DateFormat.jm().format(createAt!.toDate()),
-                          style:
-                              const TextStyle(fontSize: 12, color: greyColor)),
+                          style: const TextStyle(fontSize: 12, color: greyColor)),
                       const SizedBox(
                         width: 5,
                       ),
                       isShowTick == true
                           ? Icon(
-                              isSeen == true ? Icons.done_all : Icons.done,
-                              size: 16,
-                              color: isSeen == true ? Colors.blue : greyColor,
-                            )
+                        isSeen == true ? Icons.done_all : Icons.done,
+                        size: 16,
+                        color: isSeen == true ? Colors.blue : greyColor,
+                      )
                           : Container()
                     ],
                   ),
@@ -661,11 +732,29 @@ class _SingleChatPageState extends State<SingleChatPage> {
   }
 
   _sendTextMessage() async {
+    final provider = BlocProvider.of<MessageCubit>(context);
     if (_isDisplaySendButton) {
-      _sendMessage(
-        message: _textMessageController.text,
-        type: MessageTypeConst.textMessage,
-      );
+      if(provider.messageReplay.message != null) {
+
+        _sendMessage(
+            message: _textMessageController.text,
+            type: MessageTypeConst.textMessage,
+            repliedMessage: provider.messageReplay.message,
+            repliedTo: provider.messageReplay.username,
+            repliedMessageType: provider.messageReplay.messageType
+        );
+
+      } else {
+        _sendMessage(
+            message: _textMessageController.text,
+            type: MessageTypeConst.textMessage
+        );
+      }
+      provider.setMessageReplay = MessageReplayEntity();
+      setState(() {
+        _textMessageController.clear();
+      });
+
     } else {
       final temporaryDir = await getTemporaryDirectory();
       final audioPath = '${temporaryDir.path}/flutter_sound.aac';
@@ -742,9 +831,6 @@ class _SingleChatPageState extends State<SingleChatPage> {
       repliedMessageType: repliedMessageType,
       repliedMessage: repliedMessage,
     ).then((value) {
-      setState(() {
-        _textMessageController.clear();
-      });
       _scrollToBottom();
     });
   }
