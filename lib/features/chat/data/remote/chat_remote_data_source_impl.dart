@@ -158,7 +158,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<void> deleteChat(ChatEntity chat) async {
-    final chatRef = fireStore
+   /* final chatRef = fireStore
         .collection(FirebaseCollectionConst.users)
         .doc(chat.senderUid)
         .collection(FirebaseCollectionConst.myChat)
@@ -170,7 +170,33 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
     } catch (e) {
       print("error occur while deleting chat conversation $e");
+    }*/
+    final chatRef = fireStore
+        .collection(FirebaseCollectionConst.users)
+        .doc(chat.senderUid)
+        .collection(FirebaseCollectionConst.myChat)
+        .doc(chat.recipientUid);
+    final messageRef = fireStore
+        .collection(FirebaseCollectionConst.users)
+        .doc(chat.senderUid)
+        .collection(FirebaseCollectionConst.myChat)
+        .doc(chat.recipientUid).collection('messages');
+    try {
+      /*var snapshots = await messageRef.get();
+      for (var doc in snapshots.docs) {
+        await doc.reference.delete();
+      }*/
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+      var snapshots = await messageRef.get();
+      for (var doc in snapshots.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+      await chatRef.delete();
+    } catch (e) {
+      print("error occur while deleting chat conversation $e");
     }
+
 
   }
 

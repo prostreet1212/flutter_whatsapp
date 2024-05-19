@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,8 @@ import 'package:flutter_whatsapp/features/app/home/home_page.dart';
 import 'package:flutter_whatsapp/features/app/theme/style.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/chat/chat_cubit.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/message/message_cubit.dart';
+import 'package:flutter_whatsapp/features/status/presentation/cubit/get_my_status/get_my_status_cubit.dart';
+import 'package:flutter_whatsapp/features/status/presentation/cubit/status/status_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/auth/auth_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/credential/credential_cubit.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/get_device_number/get_device_number_cubit.dart';
@@ -23,6 +26,8 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  //FirebaseFirestore.instance.settings=Settings(persistenceEnabled: false);
+
   await di.init();
   runApp(const MyApp());
 }
@@ -40,6 +45,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context)=>di.sl<GetDeviceNumberCubit>()),
         BlocProvider(create: (context)=>di.sl<ChatCubit>()),
         BlocProvider(create: (context)=>di.sl<MessageCubit>()),
+        BlocProvider(create: (context)=>di.sl<GetMyStatusCubit>()),
+        BlocProvider(create: (context)=>di.sl<StatusCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

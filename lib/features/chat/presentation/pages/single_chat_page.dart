@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_whatsapp/features/app/global/widgets/show_video_picked_w
 import 'package:flutter_whatsapp/features/chat/domain/entities/message_entity.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/message/message_cubit.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/widgets/chat_utils.dart';
+import 'package:flutter_whatsapp/features/user/presentation/cubit/get_single_user/get_single_user_cubit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
@@ -37,6 +39,35 @@ class SingleChatPage extends StatefulWidget {
 }
 
 class _SingleChatPageState extends State<SingleChatPage> {
+  bool isShowEmojiKeyboard = false;
+  FocusNode focusNode = FocusNode();
+
+  void _hideEmojiContainer() {
+    setState(() {
+      isShowEmojiKeyboard = false;
+    });
+  }
+
+  void _showEmojiContainer() {
+    setState(() {
+      isShowEmojiKeyboard = true;
+    });
+  }
+
+  void _showKeyboard() => focusNode.requestFocus();
+
+  void _hideKeyboard() => focusNode.unfocus();
+
+  void toggleEmojiKeyboard() {
+    if (isShowEmojiKeyboard) {
+      _showKeyboard();
+      _hideEmojiContainer();
+    } else {
+      _hideKeyboard();
+      _showEmojiContainer();
+    }
+  }
+
   final TextEditingController _textMessageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isDisplaySendButton = false;
@@ -51,6 +82,8 @@ class _SingleChatPageState extends State<SingleChatPage> {
     super.initState();
     _soundRecorder = FlutterSoundRecorder();
     _openAudioRecording();
+    BlocProvider.of<GetSingleUserCubit>(context)
+        .getSingleUser(uid: widget.message.recipientUid!);
     BlocProvider.of<MessageCubit>(context).getMessages(
         message: MessageEntity(
       senderUid: widget.message.senderUid,
@@ -151,10 +184,19 @@ class _SingleChatPageState extends State<SingleChatPage> {
         title: Column(
           children: [
             Text('${widget.message.recipientName}'),
-            Text(
-              'Online',
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w400),
-            ),
+            BlocBuilder<GetSingleUserCubit, GetSingleUserState>(
+                builder: (context, state) {
+              if (state is GetSingleUserLoaded) {
+                return state.singleUser.isOnline == true
+                    ? const Text(
+                        "Online",
+                        style: TextStyle(
+                            fontSize: 11, fontWeight: FontWeight.w400),
+                      )
+                    : Container();
+              }
+              return Container();
+            }),
           ],
         ),
         actions: [
@@ -212,6 +254,16 @@ class _SingleChatPageState extends State<SingleChatPage> {
                           itemCount: messages.length,
                           itemBuilder: (context, index) {
                             var message = messages[index];
+
+                            if (message.isSeen == false &&
+                                message.recipientUid == widget.message.uid) {
+                              provider.seenMessage(
+                                  message: MessageEntity(
+                                      senderUid: widget.message.senderUid,
+                                      recipientUid: widget.message.recipientUid,
+                                      messageId: message.messageId));
+                            }
+
                             if (message.senderUid == widget.message.senderUid) {
                               return _messageLayout(
                                   messageType: message.messageType,
@@ -221,13 +273,14 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isSeen: message.isSeen,
                                   isShowTick: true,
                                   messageBgColor: messageColor,
-                                  rightPadding: message.repliedMessage == "" ? 85 : 5,
+                                  rightPadding:
+                                      message.repliedMessage == "" ? 85 : 5,
                                   reply: MessageReplayEntity(
                                       message: message.repliedMessage,
                                       messageType: message.repliedMessageType,
-                                      username: message.repliedTo
-                                  ),
+                                      username: message.repliedTo),
                                   onLongPress: () {
+                                    focusNode.unfocus();
                                     displayAlertDialog(context, onTap: () {
                                       BlocProvider.of<MessageCubit>(context)
                                           .deleteMessage(
@@ -262,13 +315,14 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   isSeen: message.isSeen,
                                   isShowTick: false,
                                   messageBgColor: senderMessageColor,
-                                  rightPadding: message.repliedMessage == "" ? 85 : 5,
+                                  rightPadding:
+                                      message.repliedMessage == "" ? 85 : 5,
                                   reply: MessageReplayEntity(
                                       message: message.repliedMessage,
                                       messageType: message.repliedMessageType,
-                                      username: message.repliedTo
-                                  ),
+                                      username: message.repliedTo),
                                   onLongPress: () {
+                                    focusNode.unfocus();
                                     displayAlertDialog(context, onTap: () {
                                       BlocProvider.of<MessageCubit>(context)
                                           .deleteMessage(
@@ -347,6 +401,7 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   onTap: () {
                                     setState(() {
                                       _isShowAttachWindow = false;
+                                      isShowEmojiKeyboard = false;
                                     });
                                   },
                                   controller: _textMessageController,
@@ -366,8 +421,14 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                   decoration: InputDecoration(
                                     contentPadding: const EdgeInsets.symmetric(
                                         vertical: 15),
-                                    prefixIcon: Icon(Icons.emoji_emotions,
-                                        color: greyColor),
+                                    prefixIcon: GestureDetector(
+                                      onTap: toggleEmojiKeyboard,
+                                      child: Icon(
+                                          isShowEmojiKeyboard == false
+                                              ? Icons.emoji_emotions
+                                              : Icons.keyboard_outlined,
+                                          color: greyColor),
+                                    ),
                                     suffixIcon: Padding(
                                       padding: const EdgeInsets.only(top: 12),
                                       child: Wrap(
@@ -443,7 +504,9 @@ class _SingleChatPageState extends State<SingleChatPage> {
                                     color: tabColor),
                                 child: Center(
                                   child: Icon(
-                                    _isDisplaySendButton
+                                    _isDisplaySendButton ||
+                                            _textMessageController
+                                                .text.isNotEmpty
                                         ? Icons.send_outlined
                                         : _isRecording
                                             ? Icons.close
@@ -456,6 +519,95 @@ class _SingleChatPageState extends State<SingleChatPage> {
                           ],
                         ),
                       ),
+                      isShowEmojiKeyboard
+                          ? SizedBox(
+                              height: 310,
+                              child: Stack(
+                                children: [
+                                  EmojiPicker(
+                                    config:
+                                        const Config(bgColor: backgroundColor),
+                                    onEmojiSelected: ((category, emoji) {
+                                      setState(() {
+                                        _textMessageController.text =
+                                            _textMessageController.text +
+                                                emoji.emoji;
+                                      });
+                                    }),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 40,
+                                      decoration: const BoxDecoration(
+                                          color: appBarColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Icon(
+                                              Icons.search,
+                                              size: 20,
+                                              color: greyColor,
+                                            ),
+                                            const Row(
+                                              children: [
+                                                Icon(
+                                                  Icons.emoji_emotions_outlined,
+                                                  size: 20,
+                                                  color: tabColor,
+                                                ),
+                                                SizedBox(
+                                                  width: 15,
+                                                ),
+                                                Icon(
+                                                  Icons.gif_box_outlined,
+                                                  size: 20,
+                                                  color: greyColor,
+                                                ),
+                                                SizedBox(
+                                                  width: 15,
+                                                ),
+                                                Icon(
+                                                  Icons.ad_units,
+                                                  size: 20,
+                                                  color: greyColor,
+                                                ),
+                                              ],
+                                            ),
+                                            GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _textMessageController
+                                                            .text =
+                                                        _textMessageController
+                                                            .text
+                                                            .substring(
+                                                                0,
+                                                                _textMessageController
+                                                                        .text
+                                                                        .length -
+                                                                    2);
+                                                  });
+                                                },
+                                                child: const Icon(
+                                                  Icons.backspace_outlined,
+                                                  size: 20,
+                                                  color: greyColor,
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            )
+                          : const SizedBox(),
                     ],
                   ),
                   _isShowAttachWindow == true
@@ -581,19 +733,18 @@ class _SingleChatPageState extends State<SingleChatPage> {
     );
   }
 
-  _messageLayout({
-    Color? messageBgColor,
-    Alignment? alignment,
-    Timestamp? createAt,
-    required VoidCallback? Function(DragUpdateDetails d) onSwipe,
-    String? message,
-    String? messageType,
-    bool? isShowTick,
-    bool? isSeen,
-    VoidCallback? onLongPress,
-    MessageReplayEntity? reply,
-    double? rightPadding
-  }) {
+  _messageLayout(
+      {Color? messageBgColor,
+      Alignment? alignment,
+      Timestamp? createAt,
+      required VoidCallback? Function(DragUpdateDetails d) onSwipe,
+      String? message,
+      String? messageType,
+      bool? isShowTick,
+      bool? isSeen,
+      VoidCallback? onLongPress,
+      MessageReplayEntity? reply,
+      double? rightPadding}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: SwipeTo(
@@ -608,91 +759,113 @@ class _SingleChatPageState extends State<SingleChatPage> {
                   children: [
                     Container(
                         margin: const EdgeInsets.only(top: 10),
-                        padding: EdgeInsets.only(left: 5, right: messageType == MessageTypeConst.textMessage ? rightPadding! : 5, top: 5, bottom: 5),
-                        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.80),
-                        decoration: BoxDecoration(color: messageBgColor, borderRadius: BorderRadius.circular(8)),
+                        padding: EdgeInsets.only(
+                            left: 5,
+                            right: messageType == MessageTypeConst.textMessage
+                                ? rightPadding!
+                                : 5,
+                            top: 5,
+                            bottom: 5),
+                        constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.80),
+                        decoration: BoxDecoration(
+                            color: messageBgColor,
+                            borderRadius: BorderRadius.circular(8)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             reply?.message == null || reply?.message == ""
-                                ? const SizedBox() :Container(
-                              height: reply!.messageType ==
-                                  MessageTypeConst.textMessage ? 70 : 80,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(.2),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: double.infinity,
-                                    width: 4.5,
+                                ? const SizedBox()
+                                : Container(
+                                    height: reply!.messageType ==
+                                            MessageTypeConst.textMessage
+                                        ? 70
+                                        : 80,
                                     decoration: BoxDecoration(
-                                        color: reply.username == widget.message.recipientName ? Colors.deepPurpleAccent
-                                            : tabColor,
-                                        borderRadius: const BorderRadius.only(
-                                            topLeft: Radius.circular(15),
-                                            bottomLeft:
-                                            Radius.circular(15))),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5.0, vertical: 5),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "${reply.username == widget.message.recipientName ? reply.username : "You"}",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: reply.username == widget.message.recipientName
-                                                    ? Colors.deepPurpleAccent
-                                                    : tabColor
+                                      color: Colors.black.withOpacity(.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: double.infinity,
+                                          width: 4.5,
+                                          decoration: BoxDecoration(
+                                              color: reply.username ==
+                                                      widget
+                                                          .message.recipientName
+                                                  ? Colors.deepPurpleAccent
+                                                  : tabColor,
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                      topLeft:
+                                                          Radius.circular(15),
+                                                      bottomLeft:
+                                                          Radius.circular(15))),
+                                        ),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 5.0, vertical: 5),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "${reply.username == widget.message.recipientName ? reply.username : "You"}",
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: reply.username ==
+                                                              widget.message
+                                                                  .recipientName
+                                                          ? Colors
+                                                              .deepPurpleAccent
+                                                          : tabColor),
+                                                ),
+                                                MessageReplayTypeWidget(
+                                                  message: reply.message,
+                                                  type: reply.messageType,
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          MessageReplayTypeWidget(
-                                            message: reply.message,
-                                            type: reply.messageType,
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
                             const SizedBox(
                               height: 3,
                             ),
 
+                         //низ виджета текст сообщения (или др.)
                             MessageTypeWidget(
                               message: message,
                               type: messageType,
                             ),
                           ],
-                        )
-                    ),
+                        )),
                     const SizedBox(height: 3),
                   ],
                 ),
+                //низ виджета дата и галочка о прочтении
                 Positioned(
                   bottom: 4,
                   right: 5,
                   child: Row(
                     children: [
                       Text(DateFormat.jm().format(createAt!.toDate()),
-                          style: const TextStyle(fontSize: 12, color: greyColor)),
+                          style:
+                              const TextStyle(fontSize: 12, color: greyColor)),
                       const SizedBox(
                         width: 5,
                       ),
                       isShowTick == true
                           ? Icon(
-                        isSeen == true ? Icons.done_all : Icons.done,
-                        size: 16,
-                        color: isSeen == true ? Colors.blue : greyColor,
-                      )
+                              isSeen == true ? Icons.done_all : Icons.done,
+                              size: 16,
+                              color: isSeen == true ? Colors.blue : greyColor,
+                            )
                           : Container()
                     ],
                   ),
@@ -733,28 +906,23 @@ class _SingleChatPageState extends State<SingleChatPage> {
 
   _sendTextMessage() async {
     final provider = BlocProvider.of<MessageCubit>(context);
-    if (_isDisplaySendButton) {
-      if(provider.messageReplay.message != null) {
-
+    if (_isDisplaySendButton || _textMessageController.text.isNotEmpty) {
+      if (provider.messageReplay.message != null) {
         _sendMessage(
             message: _textMessageController.text,
             type: MessageTypeConst.textMessage,
             repliedMessage: provider.messageReplay.message,
             repliedTo: provider.messageReplay.username,
-            repliedMessageType: provider.messageReplay.messageType
-        );
-
+            repliedMessageType: provider.messageReplay.messageType);
       } else {
         _sendMessage(
             message: _textMessageController.text,
-            type: MessageTypeConst.textMessage
-        );
+            type: MessageTypeConst.textMessage);
       }
       provider.setMessageReplay = MessageReplayEntity();
       setState(() {
         _textMessageController.clear();
       });
-
     } else {
       final temporaryDir = await getTemporaryDirectory();
       final audioPath = '${temporaryDir.path}/flutter_sound.aac';

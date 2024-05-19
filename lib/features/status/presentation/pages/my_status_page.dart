@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get_time_ago/get_time_ago.dart';
 
 import '../../../app/global/widgets/profile_widget.dart';
-import 'package:timeago/timeago.dart' as time_ago;
+
 
 import '../../../app/theme/style.dart';
 
@@ -41,7 +42,7 @@ class _MyStatusPageState extends State<MyStatusPage> {
             ),
              Expanded(
                child: Text(
-                 time_ago.format(DateTime.now()
+                 GetTimeAgo.parse(DateTime.now()
                      .subtract(Duration(seconds: DateTime.now().second))),
                  style:
                  const TextStyle(fontSize: 17, fontWeight: FontWeight.w500),

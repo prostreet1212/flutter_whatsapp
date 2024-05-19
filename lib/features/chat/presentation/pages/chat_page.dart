@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_whatsapp/features/app/const/page_const.dart';
+import 'package:flutter_whatsapp/features/app/global/widgets/dialog_widget.dart';
 import 'package:flutter_whatsapp/features/chat/domain/entities/message_entity.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/chat/chat_cubit.dart';
 import 'package:intl/intl.dart';
@@ -52,8 +53,18 @@ class _ChatPageState extends State<ChatPage> {
                               recipientName: chat.recipientName,
                               senderProfile: chat.senderProfile,
                               recipientProfile: chat.recipientProfile,
-                              //uid: widget.uid
+                              uid: widget.uid
                           ),);
+                    },
+                    onLongPress: (){
+                      displayAlertDialog(context,
+                          onTap: (){
+                        BlocProvider.of<ChatCubit>(context).deleteChat(chat: chat);
+                          Navigator.pop(context);
+                          },
+                          confirmTitle: "Delete",
+                          content: 'Are you sure you want to delete this chat?');
+
                     },
                     child: ListTile(
                       leading: SizedBox(

@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../domain/entities/chat_entity.dart';
-import '../../../domain/repositories/delete_my_chat_usecase.dart';
-import '../../../domain/repositories/get_my_chat_usecase.dart';
+import '../../../domain/use_cases/delete_my_chat_usecase.dart';
+import '../../../domain/use_cases/get_my_chat_usecase.dart';
 
 part 'chat_state.dart';
 

@@ -4,16 +4,16 @@ import 'package:flutter_whatsapp/features/chat/data/remote/chat_remote_data_sour
 import 'package:flutter_whatsapp/features/chat/data/remote/chat_remote_data_source_impl.dart';
 import 'package:flutter_whatsapp/features/chat/data/repositories/chat_repository_impl.dart';
 import 'package:flutter_whatsapp/features/chat/domain/repositories/chat_repository.dart';
-import 'package:flutter_whatsapp/features/chat/domain/repositories/delete_my_chat_usecase.dart';
-import 'package:flutter_whatsapp/features/chat/domain/repositories/get_messages_usecase.dart';
-import 'package:flutter_whatsapp/features/chat/domain/repositories/get_my_chat_usecase.dart';
-import 'package:flutter_whatsapp/features/chat/domain/repositories/send_message_usecase.dart';
 import 'package:flutter_whatsapp/features/chat/domain/use_cases/delete_message_usecase.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/chat/chat_cubit.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/message/message_cubit.dart';
 
 import '../../main_injection_container.dart';
+import 'domain/use_cases/delete_my_chat_usecase.dart';
+import 'domain/use_cases/get_messages_usecase.dart';
+import 'domain/use_cases/get_my_chat_usecase.dart';
 import 'domain/use_cases/seen_message_update_usecase.dart';
+import 'domain/use_cases/send_message_usecase.dart';
 
 Future<void> chatInjectionContainer() async {
   // * CUBITS INJECTION
@@ -27,6 +27,7 @@ Future<void> chatInjectionContainer() async {
       deleteMessageUseCase: sl.call(),
     sendMessageUseCase: sl.call(),
     getMessagesUseCase: sl.call(),
+    seenMessageUpdateUseCase: sl.call(),
   ));
 
 

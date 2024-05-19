@@ -2,13 +2,14 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_whatsapp/features/chat/domain/use_cases/seen_message_update_usecase.dart';
 
 import '../../../domain/entities/chat_entity.dart';
 import '../../../domain/entities/message_entity.dart';
 import '../../../domain/entities/message_reply_entity.dart';
-import '../../../domain/repositories/get_messages_usecase.dart';
-import '../../../domain/repositories/send_message_usecase.dart';
 import '../../../domain/use_cases/delete_message_usecase.dart';
+import '../../../domain/use_cases/get_messages_usecase.dart';
+import '../../../domain/use_cases/send_message_usecase.dart';
 
 part 'message_state.dart';
 
@@ -16,10 +17,12 @@ class MessageCubit extends Cubit<MessageState> {
   final DeleteMessageUseCase deleteMessageUseCase;
   final SendMessageUseCase sendMessageUseCase;
   final GetMessagesUseCase getMessagesUseCase;
+  final SeenMessageUpdateUseCase seenMessageUpdateUseCase;
   MessageCubit(
       {required this.deleteMessageUseCase,
       required this.sendMessageUseCase,
-      required this.getMessagesUseCase})
+      required this.getMessagesUseCase,
+      required this.seenMessageUpdateUseCase})
       : super(MessageInitial());
 
   Future<void> getMessages({required MessageEntity message}) async {
@@ -62,6 +65,22 @@ class MessageCubit extends Cubit<MessageState> {
       emit(MessageFailure());
     }
   }
+
+  Future<void> seenMessage({required MessageEntity message}) async {
+    try {
+
+      await seenMessageUpdateUseCase.call(message);
+
+    } on SocketException {
+      emit(MessageFailure());
+    } catch (_) {
+      emit(MessageFailure());
+    }
+  }
+
+
+
+
 
   MessageReplayEntity messageReplay = MessageReplayEntity();
 

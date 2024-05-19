@@ -64,7 +64,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                   recipientName: contact.username,
                                   senderProfile: currentUser.profileUrl,
                                   recipientProfile: contact.profileUrl,
-                                  //uid: widget.uid
+                                  uid: widget.uid
                               ),);
                           },
                           leading: SizedBox(
