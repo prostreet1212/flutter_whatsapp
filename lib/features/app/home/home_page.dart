@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     BlocProvider.of<GetSingleUserCubit>(context).getSingleUser(uid: widget.uid);
+
     WidgetsBinding.instance.addObserver(this);
     _tabController = TabController(length: 3, vsync: this);
     _tabController!.addListener(() {
@@ -38,12 +39,12 @@ class _HomePageState extends State<HomePage>
       });
     });
 
-   /* if (widget.index != null) {
+    if (widget.index != null) {
       setState(() {
         _currentTabIndex = widget.index!;
         _tabController!.animateTo(1);
       });
-    }*/
+    }
   }
 
   @override

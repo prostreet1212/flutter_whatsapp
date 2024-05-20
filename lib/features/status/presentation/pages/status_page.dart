@@ -213,7 +213,7 @@ class _StatusPageState extends State<StatusPage> {
                         bottom: 8,
                         child: GestureDetector(
                           onTap: () {
-                            //_eitherShowOrUploadSheet(myStatus, currentUser);
+                            _eitherShowOrUploadSheet(myStatus, currentUser);
                           },
                           child: Container(
                             width: 25,
@@ -246,7 +246,7 @@ class _StatusPageState extends State<StatusPage> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              //_eitherShowOrUploadSheet(myStatus, currentUser);
+                              _eitherShowOrUploadSheet(myStatus, currentUser);
 
                             },
                             child: const Text(
