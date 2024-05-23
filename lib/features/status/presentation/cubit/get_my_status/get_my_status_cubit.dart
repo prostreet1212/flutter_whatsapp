@@ -21,7 +21,7 @@ class GetMyStatusCubit extends Cubit<GetMyStatusState> {
       emit(GetMyStatusLoading());
       final streamResponse = getMyStatusUseCase.call(uid);
       streamResponse.listen((statuses) {
-        print("Mystatuses = $statuses");
+        //print("Mystatuses = $statuses");
         if(statuses.isEmpty) {
           emit(const GetMyStatusLoaded(myStatus: null));
         } else {

@@ -10,7 +10,6 @@ import 'package:flutter_story_view/models/story_item.dart';
 import 'package:flutter_whatsapp/features/app/const/page_const.dart';
 import 'package:flutter_whatsapp/features/app/global/date/date_formats.dart';
 import 'package:flutter_whatsapp/features/app/global/widgets/profile_widget.dart';
-import 'package:flutter_whatsapp/features/status/presentation/pages/widgets/status_dotted_borders_widget.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter_whatsapp/main_injection_container.dart' as di;
 
@@ -24,6 +23,7 @@ import '../../domain/entities/status_image_entity.dart';
 import '../../domain/use_cases/get_my_status_future_usecase.dart';
 import '../cubit/get_my_status/get_my_status_cubit.dart';
 import '../cubit/status/status_cubit.dart';
+import '../widgets/status_dotted_borders_widget.dart';
 
 class StatusPage extends StatefulWidget {
   UserEntity currentUser;
@@ -127,12 +127,12 @@ class _StatusPageState extends State<StatusPage> {
           final statuses = state.statuses
               .where((element) => element.uid != widget.currentUser.uid)
               .toList();
-          print("statuses loaded $statuses");
+          //print("statuses loaded $statuses");
 
           return BlocBuilder<GetMyStatusCubit, GetMyStatusState>(
             builder: (context, state) {
               if (state is GetMyStatusLoaded) {
-                print("loaded my status ${state.myStatus}");
+                //print("loaded my status ${state.myStatus}");
                 return _bodyWidget(statuses, widget.currentUser,
                     myStatus: state.myStatus);
               }
@@ -304,7 +304,7 @@ class _StatusPageState extends State<StatusPage> {
 
                     return ListTile(
                       onTap: () {
-                        //_showStatusImageViewBottomModalSheet(status: status, stories: stories);
+                        _showStatusImageViewBottomModalSheet(status: status, stories: stories);
                       },
                       leading: SizedBox(
                         width: 55,

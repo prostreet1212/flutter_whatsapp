@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_whatsapp/features/call/presentation/pages/call_history_page.dart';
@@ -5,11 +9,19 @@ import 'package:flutter_whatsapp/features/chat/presentation/pages/chat_page.dart
 import 'package:flutter_whatsapp/features/status/presentation/pages/status_page.dart';
 import 'package:flutter_whatsapp/features/user/presentation/cubit/get_single_user/get_single_user_cubit.dart';
 
+import '../../../storage/storage_provider.dart';
+import '../../status/domain/entities/status_entity.dart';
+import '../../status/domain/entities/status_image_entity.dart';
+import '../../status/domain/use_cases/get_my_status_future_usecase.dart';
+import '../../status/presentation/cubit/status/status_cubit.dart';
 import '../../user/domain/entities/user_entity.dart';
 import '../../user/presentation/cubit/user/user_cubit.dart';
 import '../const/page_const.dart';
+import '../global/widgets/show_image_and_video_widget.dart';
 import '../theme/style.dart';
-import 'contacts_page.dart';
+
+import 'package:path/path.dart' as path;
+import 'package:flutter_whatsapp/main_injection_container.dart' as di;
 
 class HomePage extends StatefulWidget {
   final String uid;
@@ -71,6 +83,51 @@ class _HomePageState extends State<HomePage>
       case AppLifecycleState.hidden:
         // TODO: Handle this case.
         break;
+    }
+  }
+
+  final List<StatusImageEntity> _stories = [];
+
+  List<File>? _selectedMedia;
+  List<String>? _mediaTypes; // To store the type of each selected file
+
+  Future<void> selectMedia() async {
+    setState(() {
+      _selectedMedia = null;
+      _mediaTypes = null;
+    });
+
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.media,
+        allowMultiple: true,
+      );
+      if (result != null) {
+        _selectedMedia = result.files.map((file) => File(file.path!)).toList();
+
+        // Initialize the media types list
+        _mediaTypes = List<String>.filled(_selectedMedia!.length, '');
+
+        // Determine the type of each selected file
+        for (int i = 0; i < _selectedMedia!.length; i++) {
+          String extension = path.extension(_selectedMedia![i].path)
+              .toLowerCase();
+          if (extension == '.jpg' || extension == '.jpeg' ||
+              extension == '.png') {
+            _mediaTypes![i] = 'image';
+          } else if (extension == '.mp4' || extension == '.mov' ||
+              extension == '.avi') {
+            _mediaTypes![i] = 'video';
+          }
+        }
+
+        setState(() {});
+        print("mediaTypes = $_mediaTypes");
+      } else {
+        print("No file is selected.");
+      }
+    } catch (e) {
+      print("Error while picking file: $e");
     }
   }
 
@@ -155,7 +212,7 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           floatingActionButton:
-              switchFloatingActionButtonOnTabIndex(_currentTabIndex),
+              switchFloatingActionButtonOnTabIndex(_currentTabIndex,currentUser),
           body: TabBarView(
             controller: _tabController,
             children: [
@@ -178,7 +235,7 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  switchFloatingActionButtonOnTabIndex(int index) {
+  switchFloatingActionButtonOnTabIndex(int index,UserEntity currentUser ) {
     switch (index) {
       case 0:
         {
@@ -199,7 +256,7 @@ class _HomePageState extends State<HomePage>
           return FloatingActionButton(
             backgroundColor: tabColor,
             onPressed: () {
-              /*selectMedia().then(
+              selectMedia().then(
                     (value) {
                   if (_selectedMedia != null && _selectedMedia!.isNotEmpty) {
                     showModalBottomSheet(
@@ -219,7 +276,7 @@ class _HomePageState extends State<HomePage>
                     );
                   }
                 },
-              );*/
+              );
             },
             child: const Icon(
               Icons.camera_alt,
@@ -253,4 +310,50 @@ class _HomePageState extends State<HomePage>
         }
     }
   }
+
+  _uploadImageStatus(UserEntity currentUser) {
+    StorageProviderRemoteDataSource.uploadStatuses(
+        files: _selectedMedia!,
+        onComplete: (onCompleteStatusUpload) {}
+    ).then((statusImageUrls) {
+      for (var i = 0; i < statusImageUrls.length; i++) {
+        _stories.add(StatusImageEntity(
+          url: statusImageUrls[i],
+          type: _mediaTypes![i],
+          viewers: const [],
+        ));
+      }
+
+      di.sl<GetMyStatusFutureUseCase>().call(widget.uid).then((myStatus) {
+        if (myStatus.isNotEmpty) {
+          BlocProvider.of<StatusCubit>(context).updateOnlyImageStatus(
+              status: StatusEntity(
+                  statusId: myStatus.first.statusId,
+                  stories: _stories,
+              )
+          ).then((value) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
+                HomePage(uid: widget.uid, index: 1,)));
+          });
+        } else {
+          BlocProvider.of<StatusCubit>(context).createStatus(
+            status: StatusEntity(
+                caption: "",
+                createdAt: Timestamp.now(),
+                stories: _stories,
+                username: currentUser.username,
+                uid: currentUser.uid,
+                profileUrl: currentUser.profileUrl,
+                imageUrl: statusImageUrls[0],
+                phoneNumber: currentUser.phoneNumber
+            ),
+          ).then((value) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) =>
+                HomePage(uid: widget.uid, index: 1,)));
+          });
+        }
+      });
+    });
+  }
+
 }

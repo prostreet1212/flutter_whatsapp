@@ -38,7 +38,7 @@ class StatusCubit extends Cubit<StatusState> {
       emit(StatusLoading());
       final streamResponse = getStatusesUseCase.call(status);
       streamResponse.listen((statuses) {
-        print("statuses = $statuses");
+        //print("statuses = $statuses");
         emit(StatusLoaded(statuses: statuses));
       });
 

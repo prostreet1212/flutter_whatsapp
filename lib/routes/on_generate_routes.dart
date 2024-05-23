@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_whatsapp/features/app/const/page_const.dart';
 import 'package:flutter_whatsapp/features/app/home/contacts_page.dart';
 import 'package:flutter_whatsapp/features/chat/domain/entities/message_entity.dart';
+import 'package:flutter_whatsapp/features/status/domain/entities/status_entity.dart';
 import 'package:flutter_whatsapp/features/status/presentation/pages/my_status_page.dart';
 import 'package:flutter_whatsapp/features/user/domain/entities/user_entity.dart';
 import 'package:flutter_whatsapp/features/user/presentation/pages/edit_profile_page.dart';
@@ -49,7 +50,12 @@ class OnGenerateRoute{
       }
       case PageConst.myStatusPage:
         {
-          return materialPageBuilder(MyStatusPage());
+          if(args is StatusEntity) {
+            return materialPageBuilder(MyStatusPage(status: args,));
+          }else{
+            return materialPageBuilder(const ErrorPage());
+          }
+
         }
       case PageConst.singleChatPage: {
         if(args is MessageEntity) {

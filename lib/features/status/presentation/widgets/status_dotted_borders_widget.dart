@@ -1,9 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-
-import '../../../../app/theme/style.dart';
-import '../../../domain/entities/status_image_entity.dart';
+import '../../../app/theme/style.dart';
+import '../../domain/entities/status_image_entity.dart';
 
 class StatusDottedBordersWidget extends CustomPainter {
   //number of stories

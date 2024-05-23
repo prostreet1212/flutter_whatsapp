@@ -78,7 +78,10 @@ class StatusRemoteDataSourceImpl implements StatusRemoteDataSource {
         .data()['createdAt']
         .toDate()
         .isAfter(DateTime.now().subtract(const Duration(hours: 24))))
-        .map((e) => StatusModel.fromSnapshot(e))
+        .map((e) {
+          return  StatusModel.fromSnapshot(e);
+
+    })
         .toList());
   }
 
@@ -121,7 +124,9 @@ class StatusRemoteDataSourceImpl implements StatusRemoteDataSource {
         .data()['createdAt']
         .toDate()
         .isAfter(DateTime.now().subtract(const Duration(hours: 24))))
-        .map((e) => StatusModel.fromSnapshot(e))
+        .map((e) {
+          return StatusModel.fromSnapshot(e);
+    })
         .toList());
   }
 
@@ -178,7 +183,7 @@ class StatusRemoteDataSourceImpl implements StatusRemoteDataSource {
           stories.addAll(status.stories!.map((e) => StatusImageEntity.toJsonStatic(e)));
           // final updatedStories = List<StatusImageEntity>.from(existingStatusData['stories'])
           //   ..addAll(status.stories!);
-
+          //int lastIndex=stories.length-1;
           await statusCollection.doc(status.statusId).update({
             'stories': stories,
             'imageUrl': stories[0]['url']

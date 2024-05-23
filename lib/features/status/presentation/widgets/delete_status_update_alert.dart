@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../../app/theme/style.dart';
+import '../../../app/theme/style.dart';
 
 deleteStatusUpdate(BuildContext context, {required VoidCallback onTap}) {
   // set up the button
