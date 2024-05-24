@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_whatsapp/features/app/home/home_page.dart';
 import 'package:flutter_whatsapp/features/app/theme/style.dart';
+import 'package:flutter_whatsapp/features/call/presentation/cubits/agora/agora_cubit.dart';
+import 'package:flutter_whatsapp/features/call/presentation/cubits/call/call_cubit.dart';
+import 'package:flutter_whatsapp/features/call/presentation/cubits/my_call_history/my_call_history_cubit.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/chat/chat_cubit.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/cubit/message/message_cubit.dart';
 import 'package:flutter_whatsapp/features/status/presentation/cubit/get_my_status/get_my_status_cubit.dart';
@@ -47,6 +50,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context)=>di.sl<MessageCubit>()),
         BlocProvider(create: (context)=>di.sl<GetMyStatusCubit>()),
         BlocProvider(create: (context)=>di.sl<StatusCubit>()),
+        BlocProvider(create: (context)=>di.sl<CallCubit>()),
+        BlocProvider(create: (context)=>di.sl<MyCallHistoryCubit>()),
+        BlocProvider(create: (context)=>di.sl<AgoraCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

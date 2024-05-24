@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_whatsapp/features/call/call_injection_container.dart';
 import 'package:flutter_whatsapp/features/chat/chat_injection_container.dart';
 import 'package:flutter_whatsapp/features/status/status_injection_container.dart';
 import 'package:get_it/get_it.dart';
@@ -20,5 +21,6 @@ Future<void> init() async{
   await userInjectionContainer();
   await chatInjectionContainer();
   await statusInjectionContainer();
+  await callInjectionContainer();
 
 }
