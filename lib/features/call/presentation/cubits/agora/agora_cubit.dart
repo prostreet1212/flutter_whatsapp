@@ -18,7 +18,7 @@ class AgoraCubit extends Cubit<AgoraState> {
         agoraConnectionData: AgoraConnectionData(
           appId: AgoraConfig.agoraAppId,
           channelName: channelName!,
-          tokenUrl: tokenUrl,
+          //tokenUrl: tokenUrl,
         ),
       );
       await _client!.initialize();

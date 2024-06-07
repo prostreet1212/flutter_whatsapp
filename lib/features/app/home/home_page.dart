@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_whatsapp/features/call/presentation/cubits/my_call_history/my_call_history_cubit.dart';
 import 'package:flutter_whatsapp/features/call/presentation/pages/call_history_page.dart';
 import 'package:flutter_whatsapp/features/chat/presentation/pages/chat_page.dart';
 import 'package:flutter_whatsapp/features/status/presentation/pages/status_page.dart';
@@ -42,7 +43,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     BlocProvider.of<GetSingleUserCubit>(context).getSingleUser(uid: widget.uid);
-
+    BlocProvider.of<MyCallHistoryCubit>(context).getMyCallHistory(uid: widget.uid);
     WidgetsBinding.instance.addObserver(this);
     _tabController = TabController(length: 3, vsync: this);
     _tabController!.addListener(() {
@@ -222,7 +223,7 @@ class _HomePageState extends State<HomePage>
                StatusPage(
                 currentUser: currentUser,
               ),
-              CallHistoryPage(),
+              CallHistoryPage(currentUser: currentUser,),
             ],
           ),
         );
